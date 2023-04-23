@@ -134,7 +134,7 @@ class GpioInterruptManager:
         GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         self.button = button
 
-    def __call__(callback):
+    def __call__(self, callback):
         GPIO.add_event_detect(self.button, GPIO.RISING, callback=callback, bouncetime=100)
 
 def cleanup(sig, frame):
