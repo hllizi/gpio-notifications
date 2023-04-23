@@ -66,7 +66,7 @@ class InterruptReceiver:
     handler = None
     interruptManager = None
 
-    def __init__(interruptManager):
+    def __init__(self, interruptManager):
         self.interruptManager = interruptManager
 
     def setEventHandler(self, handler):
