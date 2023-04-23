@@ -4,6 +4,7 @@ import time
 last = None
 min_differerence = 5000
 
+# Compute the response to a signal that has been received from the source. Except for their access to the parameters based to the constructor, __call__ and any functions it uses should be pure.
 class SignalResponseComputer:
     last = None
 
@@ -49,7 +50,7 @@ class EventReceiver:
         self.handler = handler
 
     def listen(self):
-        event = self.eventSource(True)
+        event = self.eventSource()
         self.handler(event)
         self.listen()
 
@@ -57,8 +58,12 @@ class MessageSender:
     def send(self, message):
         print(message)
 
+class EventSource:
+    def __call__(self,):
+        input("Type message: ")
+
 control = Control(
-                    EventReceiver(lambda a: input("Type message: ")), 
+                    EventReceiver(EventSource()), 
                     SignalResponseComputer(5), 
                     MessageSender()
                 )
