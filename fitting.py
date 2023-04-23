@@ -137,15 +137,15 @@ class GpioInterruptManager:
     def __call__(callback):
         GPIO.add_event_detect(self.button, GPIO.RISING, callback=callback, bouncetime=100)
 
+def cleanup(sig, frame):
+    GPIO.cleanup()
+    sys.exit(0)
+
 control = Control(
                     InterruptReceiver(GpioInterruptManager(BELL)), 
                     SignalResponseComputer(configDictionary), 
                     HttpMessageSender(configDictionary)
                 )
-
-def cleanup(sig, frame):
-    GPIO.cleanup()
-    sys.exit(0)
 
 signal.signal(signal.SIGINT, cleanup)
 signal.pause()
