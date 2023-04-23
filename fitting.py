@@ -2,6 +2,7 @@ import datetime
 import time
 import requests
 import itertools
+import yaml
 
 last = None
 min_differerence = 5000
@@ -56,7 +57,10 @@ class EventReceiver:
         self.handler(event)
         self.listen()
 
-class MessageSender:
+class HttpMessageSender:
+    def __init__(self, config):
+        self.config = config
+
     def send(self, message):
         requestContent = [ 
                             ('title', 'bell')
@@ -68,8 +72,8 @@ class MessageSender:
         requests.post(url)
 
     def prepareQuery(self, requestContent):
-            url = "http://localhost:9000"  
-            token = [("token", "Ax5l8SGKz-hXQCr")]
+            url = self.config["server"]  
+            token = [("token", self.config["token"])]
             query = token + requestContent
             url += "/message"
             if query: 
@@ -87,11 +91,14 @@ class EventSource:
     def __call__(self,):
         input("Type message: ")
 
+with open("./config.yaml", 'r') as file:
+           configDictionary = yaml.safe_load(file)
+
 
 control = Control(
                     EventReceiver(EventSource()), 
                     SignalResponseComputer(5), 
-                    MessageSender()
+                    HttpMessageSender(configDictionary)
                 )
 
 
