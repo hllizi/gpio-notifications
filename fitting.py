@@ -73,7 +73,7 @@ class InterruptReceiver:
         self.handler = handler
 
     def listen(self):
-        self.interruptManager(handler)
+        self.interruptManager(self.handler)
 
 
 
