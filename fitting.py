@@ -47,7 +47,7 @@ class Control:
         if response:
             self.messageSender.send(response)
 
-class EventLstener:
+class EventListener:
     handler = None
     eventSource = None
 
