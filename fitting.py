@@ -15,12 +15,13 @@ class SignalResponseComputer:
     last = None
 
     def __init__(self, config):
-        self.min_differerence = min_differerence
+        self.waitingTime = self.config["waiting_time"]
 
     def __call__(self, signal):
      try: 
          difference = signal - self.last
-         if difference >= datetime.timedelta(seconds = self.config["waiting_time"] * 1000):
+         if difference >= datetime.timedelta(
+                                seconds = waitingTime):
             self.last = signal
             return signal
          else: 
@@ -43,7 +44,8 @@ class Control:
     def handleEvent(self, eventValue):
         message = self.computeMessage(eventValue)
         response = self.signalResponseComputer(message)
-        self.messageSender.send(response)
+        if response:
+            self.messageSender.send(response)
 
 class EventLstener:
     handler = None
