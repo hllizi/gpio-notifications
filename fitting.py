@@ -63,24 +63,25 @@ class HttpMessageSender:
 
     def send(self, message):
         requestContent = [ 
-                            ('title', 'bell')
-                         ,  ('message', 'bringo')
+                            ('title', self.config["notification"]["title"])
+                         ,  ('message', self.config["notification"]["message"])
                          ,  ('priority', 8)
                          ] 
         url = self.prepareQuery(requestContent)
-        print(url)
         requests.post(url)
 
     def prepareQuery(self, requestContent):
-            url = self.config["server"]  
-            token = [("token", self.config["token"])]
-            query = token + requestContent
-            url += "/message"
-            if query: 
-                url += "?"
-                queryAsStrings = map(makeSetting, query)
-                url += '&'.join(queryAsStrings)    
-            return url 
+        url =  (self.config["gotify"]["scheme"] 
+               + "://" + self.config["gotify"]["server"] 
+               + ":" + str(self.config["gotify"]["port"]))
+        token = [("token", self.config["gotify"]["token"])]
+        query = token + requestContent
+        url += "/message"
+        if query: 
+            url += "?"
+            queryAsStrings = map(makeSetting, query)
+            url += '&'.join(queryAsStrings)    
+        return url 
 
 def makeSetting(paramAndValue):
     print(paramAndValue)
