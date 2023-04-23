@@ -1,5 +1,7 @@
 import datetime
 import time
+import requests
+import itertools
 
 last = None
 min_differerence = 5000
@@ -56,11 +58,35 @@ class EventReceiver:
 
 class MessageSender:
     def send(self, message):
-        print(message)
+        requestContent = [ 
+                            ('title', 'bell')
+                         ,  ('message', 'bringo')
+                         ,  ('priority', 8)
+                         ] 
+        url = self.prepareQuery(requestContent)
+        print(url)
+        requests.post(url)
+
+    def prepareQuery(self, requestContent):
+            url = "http://localhost:9000"  
+            token = [("token", "Ax5l8SGKz-hXQCr")]
+            query = token + requestContent
+            url += "/message"
+            if query: 
+                url += "?"
+                queryAsStrings = map(makeSetting, query)
+                url += '&'.join(queryAsStrings)    
+            return url 
+
+def makeSetting(paramAndValue):
+    print(paramAndValue)
+    (param, value) = paramAndValue
+    return param + "=" + str(value)
 
 class EventSource:
     def __call__(self,):
         input("Type message: ")
+
 
 control = Control(
                     EventReceiver(EventSource()), 
