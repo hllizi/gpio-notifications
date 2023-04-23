@@ -138,7 +138,7 @@ class GpioInterruptManager:
         GPIO.add_event_detect(self.button, GPIO.RISING, callback=callback, bouncetime=100)
 
 control = Control(
-                    EventListener(EventSource()), 
+                    InterruptReceiver(GpioInterruptManager(BELL)), 
                     SignalResponseComputer(configDictionary), 
                     HttpMessageSender(configDictionary)
                 )
