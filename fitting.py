@@ -21,7 +21,7 @@ class SignalResponseComputer:
      try: 
          difference = signal - self.last
          if difference >= datetime.timedelta(
-                                seconds = waitingTime):
+                                seconds = self.waitingTime):
             self.last = signal
             return signal
          else: 
