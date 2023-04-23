@@ -71,9 +71,7 @@ class HttpMessageSender:
         requests.post(url)
 
     def prepareQuery(self, requestContent):
-        url =  (self.config["gotify"]["scheme"] 
-               + "://" + self.config["gotify"]["server"] 
-               + ":" + str(self.config["gotify"]["port"]))
+        url = self.base() 
         token = [("token", self.config["gotify"]["token"])]
         query = token + requestContent
         url += "/message"
@@ -82,6 +80,11 @@ class HttpMessageSender:
             queryAsStrings = map(makeSetting, query)
             url += '&'.join(queryAsStrings)    
         return url 
+
+    def urlBase(self):
+          url =  (self.config["gotify"]["scheme"] 
+                 + "://" + self.config["gotify"]["server"] 
+                 + ":" + str(self.config["gotify"]["port"]))
 
 def makeSetting(paramAndValue):
     print(paramAndValue)
