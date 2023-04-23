@@ -1,4 +1,5 @@
 import datetime
+import signal
 import time
 import requests
 import itertools
@@ -132,6 +133,12 @@ control = Control(
                     SignalResponseComputer(configDictionary), 
                     HttpMessageSender(configDictionary)
                 )
+
+def cleanup(sig, frame):
+    GPIO.cleanup()
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, cleanup)
 
 
 
