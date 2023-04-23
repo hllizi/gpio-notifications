@@ -148,6 +148,7 @@ def cleanup(sig, frame):
     sys.exit(0)
 
 signal.signal(signal.SIGINT, cleanup)
+signal.pause()
 
 
 
