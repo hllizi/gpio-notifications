@@ -15,7 +15,7 @@ class SignalResponseComputer:
     last = None
 
     def __init__(self, config):
-        self.waitingTime = self.config["waiting_time"]
+        self.waitingTime = config["waiting_time"]
 
     def __call__(self, signal):
      try: 
