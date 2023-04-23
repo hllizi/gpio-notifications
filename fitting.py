@@ -81,9 +81,16 @@ class HttpMessageSender:
 
     def send(self, message):
         requestContent = [ 
-                            ('title', self.config["notification"]["title"])
-                         ,  ('message', self.config["notification"]["message"])
-                         ,  ('priority', 8)
+                            ( 'title', 
+                              self.config["notification"]["title"]
+                             )
+                         ,  ( 'message', 
+                              self.config["notification"]["message"]
+                             )
+                         ,  ( 
+                              'priority', 
+                              8
+                            )
                          ] 
         url = self.prepareQuery(requestContent)
         requests.post(url)
