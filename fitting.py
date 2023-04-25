@@ -5,6 +5,8 @@ import requests
 import itertools
 import yaml
 import RPi.GPIO as GPIO
+import datetime
+from datetime import date
 
 BELL = 17
 
@@ -31,12 +33,13 @@ class SignalResponseComputer:
          return signal
 
 class Control:
-    def __init__(self, eventListener, signalResponseComputer, messageSender):
+    def __init__(self, eventListener, signalResponseComputer, messageSender, config):
         self.signalResponseComputer = signalResponseComputer 
         self.messageSender = messageSender
         self.eventListener = eventListener
         self.eventListener.setEventHandler(self.handleEvent)
         self.eventListener.listen()
+        self.messageTemplate = config["notification"]["message_template"]
 
     def computeMessage(self, eventValue):
         return datetime.datetime.now()
@@ -45,7 +48,12 @@ class Control:
         message = self.computeMessage(eventValue)
         response = self.signalResponseComputer(message)
         if response:
-            self.messageSender.send(response)
+            self.messageSender.send(formatResponse(response))
+    
+    def formatResponse(respone):
+            self.messageTemplate.replace(
+                    "%time%", datatime.date.ctime(now)
+                    )
 
 class EventListener:
     handler = None
@@ -120,8 +128,12 @@ def makeSetting(paramAndValue):
      return param + "=" + str(value)
 
 class EventSource:
-    def __call__(self,):
-        input("Type message: ")
+    def __call__(self, handler):
+        userInput = input("Type message: ")
+        handler(input)
+        self(handler)
+
+
 
     
 with open("./config.yaml", 'r') as file:
