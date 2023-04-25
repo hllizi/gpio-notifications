@@ -4,7 +4,7 @@ import time
 import requests
 import itertools
 import yaml
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 import datetime
 from datetime import date
 
@@ -33,13 +33,17 @@ class SignalResponseComputer:
          return signal
 
 class Control:
+    messageTemplate = None
     def __init__(self, eventListener, signalResponseComputer, messageSender, config):
+        print("booooooooooooooooooo")
         self.signalResponseComputer = signalResponseComputer 
         self.messageSender = messageSender
         self.eventListener = eventListener
+        self.messageTemplate = config["notification"]["message_template"]
+        print(self.messageTemplate)
         self.eventListener.setEventHandler(self.handleEvent)
         self.eventListener.listen()
-        self.messageTemplate = config["notification"]["message_template"]
+        print(config)
 
     def computeMessage(self, eventValue):
         return datetime.datetime.now()
@@ -48,13 +52,8 @@ class Control:
         message = self.computeMessage(eventValue)
         response = self.signalResponseComputer(message)
         if response:
-            self.messageSender.send(formatResponse(response))
+            self.messageSender.send(response)
     
-    def formatResponse(respone):
-            self.messageTemplate.replace(
-                    "%time%", datatime.date.ctime(now)
-                    )
-
 class EventListener:
     handler = None
     eventSource = None
@@ -66,7 +65,7 @@ class EventListener:
         self.handler = handler
 
     def listen(self):
-        event = self.eventSource(handler)
+        event = self.eventSource(self.handler)
 
 
 class HttpMessageSender:
@@ -79,7 +78,7 @@ class HttpMessageSender:
                               self.config["notification"]["title"]
                              )
                          ,  ( 'message', 
-                              self.config["notification"]["message"]
+                              message
                              )
                          ,  ( 
                               'priority', 
@@ -117,6 +116,15 @@ class EventSource:
         handler(input)
         self(handler)
 
+class MessageFormatter:
+        def __init__(self, template):
+            self.template = template
+
+        def __call__(self, input):
+            return self.template.replace(
+                    "%time%", date.ctime(input)
+                    )
+
 
 
     
@@ -124,23 +132,35 @@ with open("./config.yaml", 'r') as file:
            configDictionary = yaml.safe_load(file)
 
 
-class GpioInterruptManager:
-    def __init__(self, button):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        self.button = button
+#class GpioInterruptManager:
+#    def __init__(self, button):
+#        GPIO.setmode(GPIO.BCM)
+#        GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#        self.button = button
+#
+#    def __call__(self, callback):
+#        GPIO.add_event_detect(self.button, GPIO.RISING, callback=callback, bouncetime=100)
+#
 
-    def __call__(self, callback):
-        GPIO.add_event_detect(self.button, GPIO.RISING, callback=callback, bouncetime=100)
+class Messenger:
+    def __init__(self, formatter):
+        self.formatter = formatter
+    def send(self, message):
+        print(self.formatter(message))
 
 def cleanup(sig, frame):
     GPIO.cleanup()
     sys.exit(0)
 
 control = Control(
-                    EventListener(GpioInterruptManager(BELL)), 
+                    EventListener(EventSource()), 
                     SignalResponseComputer(configDictionary), 
-                    HttpMessageSender(configDictionary)
+                    Messenger(
+                        MessageFormatter(
+                            configDictionary["notification"]["message_template"]
+                            )
+                        ), #HttpMessageSender(configDictionary),
+                    configDictionary 
                 )
 
 signal.signal(signal.SIGINT, cleanup)
