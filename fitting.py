@@ -4,7 +4,7 @@ import time
 import requests
 import itertools
 import yaml
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import datetime
 from datetime import date
 
@@ -35,15 +35,12 @@ class SignalResponseComputer:
 class Control:
     messageTemplate = None
     def __init__(self, eventListener, signalResponseComputer, messageSender, config):
-        print("booooooooooooooooooo")
         self.signalResponseComputer = signalResponseComputer 
         self.messageSender = messageSender
         self.eventListener = eventListener
         self.messageTemplate = config["notification"]["message_template"]
-        print(self.messageTemplate)
         self.eventListener.setEventHandler(self.handleEvent)
         self.eventListener.listen()
-        print(config)
 
     def computeMessage(self, eventValue):
         return datetime.datetime.now()
@@ -69,8 +66,9 @@ class EventListener:
 
 
 class HttpMessageSender:
-    def __init__(self, config):
+    def __init__(self, config, formatter):
         self.config = config
+        self.formatter = formatter
 
     def send(self, message):
         requestContent = [ 
@@ -78,7 +76,7 @@ class HttpMessageSender:
                               self.config["notification"]["title"]
                              )
                          ,  ( 'message', 
-                              message
+                              formatter(message)
                              )
                          ,  ( 
                               'priority', 
@@ -106,7 +104,6 @@ class HttpMessageSender:
           return url
 
 def makeSetting(paramAndValue):
-     print(paramAndValue)
      (param, value) = paramAndValue
      return param + "=" + str(value)
 
@@ -132,15 +129,15 @@ with open("./config.yaml", 'r') as file:
            configDictionary = yaml.safe_load(file)
 
 
-#class GpioInterruptManager:
-#    def __init__(self, button):
-#        GPIO.setmode(GPIO.BCM)
-#        GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-#        self.button = button
-#
-#    def __call__(self, callback):
-#        GPIO.add_event_detect(self.button, GPIO.RISING, callback=callback, bouncetime=100)
-#
+class GpioInterruptManager:
+    def __init__(self, button):
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        self.button = button
+
+    def __call__(self, callback):
+        GPIO.add_event_detect(self.button, GPIO.RISING, callback=callback, bouncetime=100)
+
 
 class Messenger:
     def __init__(self, formatter):
@@ -153,13 +150,9 @@ def cleanup(sig, frame):
     sys.exit(0)
 
 control = Control(
-                    EventListener(EventSource()), 
+                    EventListener(GpioInterruptManager(BELL)), 
                     SignalResponseComputer(configDictionary), 
-                    Messenger(
-                        MessageFormatter(
-                            configDictionary["notification"]["message_template"]
-                            )
-                        ), #HttpMessageSender(configDictionary),
+                    HttpMessageSender(configDictionary),
                     configDictionary 
                 )
 
