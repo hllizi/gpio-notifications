@@ -66,23 +66,7 @@ class EventListener:
         self.handler = handler
 
     def listen(self):
-        event = self.eventSource()
-        self.handler(event)
-        self.listen()
-
-class InterruptReceiver:
-    handler = None
-    interruptManager = None
-
-    def __init__(self, interruptManager):
-        self.interruptManager = interruptManager
-
-    def setEventHandler(self, handler):
-        self.handler = handler
-
-    def listen(self):
-        self.interruptManager(self.handler)
-
+        event = self.eventSource(handler)
 
 
 class HttpMessageSender:
@@ -154,7 +138,7 @@ def cleanup(sig, frame):
     sys.exit(0)
 
 control = Control(
-                    InterruptReceiver(GpioInterruptManager(BELL)), 
+                    EventListener(GpioInterruptManager(BELL)), 
                     SignalResponseComputer(configDictionary), 
                     HttpMessageSender(configDictionary)
                 )
