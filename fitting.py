@@ -76,7 +76,7 @@ class HttpMessageSender:
                               self.config["notification"]["title"]
                              )
                          ,  ( 'message', 
-                              formatter(message)
+                              self.formatter(message)
                              )
                          ,  ( 
                               'priority', 
