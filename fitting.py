@@ -152,7 +152,7 @@ def cleanup(sig, frame):
 control = Control(
                     EventListener(GpioInterruptManager(BELL)), 
                     SignalResponseComputer(configDictionary), 
-                    HttpMessageSender(configDictionary),
+                    HttpMessageSender(configDictionary, MessageFormatter(configDictionary["notification"]["message_template"])),
                     configDictionary 
                 )
 
