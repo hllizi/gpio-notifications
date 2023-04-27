@@ -136,7 +136,7 @@ class GpioInterruptManager:
         self.button = button
 
     def __call__(self, callback):
-        GPIO.add_event_detect(self.button, GPIO.RISING, callback=callback, bouncetime=100)
+        GPIO.add_event_detect(self.button, GPIO.RISING, callback=callback, bouncetime=300)
 
 
 class Messenger:
