@@ -132,7 +132,7 @@ with open("./config.yaml", 'r') as file:
 class GpioInterruptManager:
     def __init__(self, button):
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         self.button = button
 
     def __call__(self, callback):
