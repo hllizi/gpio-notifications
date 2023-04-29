@@ -46,6 +46,7 @@ class Control:
         return datetime.datetime.now()
 
     def handleEvent(self, eventValue):
+        print eventValue
         message = self.computeMessage(eventValue)
         response = self.signalResponseComputer(message)
         if response:
@@ -130,13 +131,26 @@ with open("./config.yaml", 'r') as file:
 
 
 class GpioInterruptManager:
+    lastEventTime = None
     def __init__(self, button):
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         self.button = button
 
+    def wrapCallback(self, callback):
+         event: 
+            timeNow = datetime.datetime.now()
+            if not GPIO.input(self.button):
+             timeAnnotatedEvent = (event, timeNow - self.lastEventTime
+             result = callback(timeAnnotatedEvent);
+            else: self.lastEventTime = timeNow
+
     def __call__(self, callback):
-        GPIO.add_event_detect(self.button, GPIO.RISING, callback=callback, bouncetime=300)
+        GPIO.add_event_detect(
+            self.button, 
+            GPIO.BOTH, 
+            callback=self.wrapCallback(callback), 
+            bouncetime=300)
 
 
 class Messenger:
