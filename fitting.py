@@ -46,7 +46,7 @@ class Control:
         return datetime.datetime.now()
 
     def handleEvent(self, eventValue):
-        print eventValue
+        print(eventValue)
         message = self.computeMessage(eventValue)
         response = self.signalResponseComputer(message)
         if response:
