@@ -47,8 +47,9 @@ class Control:
 
     def handleEvent(self, eventValue):
         print(eventValue)
-        message = self.computeMessage(eventValue)
-        response = self.signalResponseComputer(message)
+        for eventValue in eventContent, time
+            message = self.computeMessage(eventContent)
+            response = self.signalResponseComputer(message)
         if response:
             self.messageSender.send(response)
     
