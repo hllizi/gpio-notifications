@@ -142,7 +142,7 @@ class GpioInterruptManager:
             timeNow = datetime.datetime.now()
             if not GPIO.input(self.button):
              timeAnnotatedEvent = (event, timeNow - self.lastEventTime
-             result = callback(timeAnnotatedEvent);
+             result = callback(timeAnnotatedEvent)
             else: self.lastEventTime = timeNow
         return modifyEvent
 
