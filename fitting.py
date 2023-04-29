@@ -138,7 +138,7 @@ class GpioInterruptManager:
         self.button = button
 
     def wrapCallback(self, callback):
-         event: 
+         lambda event: 
             timeNow = datetime.datetime.now()
             if not GPIO.input(self.button):
              timeAnnotatedEvent = (event, timeNow - self.lastEventTime
