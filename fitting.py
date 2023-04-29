@@ -146,7 +146,7 @@ class GpioInterruptManager:
                     timeAnnotatedEvent = (event, timeNow - self.lastEventTime)
                 else: 
                     timeAnnotatedEvent = (event, None)
-             result = callback(timeAnnotatedEvent)
+                result = callback(timeAnnotatedEvent)
             else: self.lastEventTime = timeNow
         return modifyEvent
 
