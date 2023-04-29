@@ -142,7 +142,10 @@ class GpioInterruptManager:
         def modifyEvent(event):
             timeNow = datetime.datetime.now()
             if not GPIO.input(self.button):
-             timeAnnotatedEvent = (event, timeNow - self.lastEventTime)
+                if self.lastEventTime:
+                    timeAnnotatedEvent = (event, timeNow - self.lastEventTime)
+                else: 
+                    timeAnnotatedEvent = (event, None)
              result = callback(timeAnnotatedEvent)
             else: self.lastEventTime = timeNow
         return modifyEvent
